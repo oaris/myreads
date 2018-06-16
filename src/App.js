@@ -1,8 +1,7 @@
 import React from 'react'
 import * as BooksAPI from './BooksAPI'
 import './App.css'
-import { Route } from 'react-router-dom'
-import { Link } from 'react-router-dom'
+import { Route, Link } from 'react-router-dom'
 import Search from './Search'
 import Shelf from './Shelf'
 
@@ -25,13 +24,31 @@ class BooksApp extends React.Component {
 
   }
 
+  componentDidMount() {
+    BooksAPI.getAll().then((books) => {
+    //  this.setState({ myBooks:books })
+      this.setState ({
+      read : books.filter((book) => book.shelf === "read"),
+      wantToRead: books.filter((book) => book.shelf === "wantToRead"),
+      currentlyReading: books.filter((book) => book.shelf === "currentlyReading"),
+      myBooks : books
+    })
 
+
+    })
+  }
 
 // for both
   changeOption = (book, option) => {
-        BooksAPI.update(book, option).then(res => {console.log(res)})
-        console.log(book.id)
-        console.log(option)
+        BooksAPI.update(book, option).then(BooksAPI.getAll).then(books => {
+          this.setState ({
+          read : books.filter((book) => book.shelf === "read"),
+          wantToRead: books.filter((book) => book.shelf === "wantToRead"),
+          currentlyReading: books.filter((book) => book.shelf === "currentlyReading"),
+          myBooks : books
+          })
+         })
+
 
 
 
@@ -49,29 +66,6 @@ class BooksApp extends React.Component {
 
   render() {
 
-    BooksAPI.getAll().then((books) => {
-    //  this.setState({ myBooks:books })
-      this.setState ({
-      read : books.filter((book) => book.shelf === "read"),
-      wantToRead: books.filter((book) => book.shelf === "wantToRead"),
-      currentlyReading: books.filter((book) => book.shelf === "currentlyReading"),
-      myBooks : books
-    })
-
-
-    })
-
-    // if(searchQuery){
-    //   BooksAPI.search(searchQuery).then((books) => {
-    //     this.setState({ bookResult:books })
-    //   })else{
-    //     this.setState({ bookResult:[] })
-    //
-    //   }
-    //
-    //
-    //
-    // }
 
     return (
 
